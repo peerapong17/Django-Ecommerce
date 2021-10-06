@@ -1,0 +1,65 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark px-3">
+  <a href="/" class="navbar-brand">
+    <i class="fas fa-shipping-fast text-warning fa-2x"></i>
+  </a>
+  <button type="button" class="navbar-toggler bg-light" data-toggle="collapse" data-target="#nav" name="button"><span
+      class="navbar-toggler-icon"></span></button>
+  <div class="collapse navbar-collapse" id="nav">
+    <ul class="navbar-nav flex-grow-1">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          Category
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li><a href="{% url 'home' %}" class="dropdown-item">All</a></li>
+          {% for category in categories%}
+          <li><a class="dropdown-item" href="{{category.get_product_by_category}}">{{category.name}}</a></li>
+          {% endfor %}
+        </ul>
+      </li>
+      {% if request.user.is_authenticated and request.user.username %}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          Welcome, {{request.user.username}} <i class="fas fa-user circle"></i>
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li><a href="{% url 'orderHistory' %}" class="dropdown-item">history</a></li>
+        </ul>
+      </li>
+      {% endif %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'cartDetail' %}"><i class="fas fa-shopping-cart"></i>  {{item_count}}</a>
+      </li>
+      <div class="flex-grow-1"></div>
+      <form class="form-inline ml-3" action="{% url 'search' %}" method="POST">
+        {% csrf_token %}
+        <div class="input-group">
+          <input type="text" name="search" class="form-control" placeholder="Search">
+          <div class="input-group-append">
+            <button type="submit" class="btn btn-warning"><i class="fas fa-search"></i></button>
+          </div>
+        </div>
+      </form>
+      {% if request.user.is_authenticated and request.user.username %}
+      <li class="nav-item ms-3">
+        <a href="{% url 'signOutUser' %}" class="nav-link text-light btn btn-danger ml-3">
+          Sign Out <i class="fas fa-sign-out-alt"></i>
+        </a>
+      </li>
+      {% else %}
+      <li class="nav-item">
+        <a href="{% url 'signUpUser' %}" class="nav-link text-light mx-3 btn btn-success">
+          Sign Up <i class="fas fa-user-plus"></i>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{% url 'signInUser' %}" class="nav-link text-light btn btn-primary">
+          Sign In <i class="fas fa-sign-in-alt"></i>
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>

@@ -1,0 +1,29 @@
+{% extends 'layout/base.html' %}
+{% load humanize %}
+{% block content%}
+
+<div class="container">
+  <div class="row p-5">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-8">
+      <div class="card mt-4">
+        <img class="card-img-top img-fluid" src="{{product.image.url}}" alt="">
+        <div class="card-body">
+          <div class="d-flex justify-content-between">
+            <h3 class="card-title">{{product.name}}</h3>
+            <h4>฿{{product.price | intcomma}}</h4>
+          </div>
+          <p class="card-text">{{product.description}}</p>
+          {% if product.stock <= 0 %} 
+          <h5 class="text-danger">สินค้าหมด</h5>
+            {% else %}
+            <a href="{%url 'addToCart' product.id %}" class="btn btn-primary float-end">เพิ่มลงตะกร้า</a>
+            {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
