@@ -22,7 +22,7 @@
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
           data-bs-toggle="dropdown" aria-expanded="false">
-          Welcome, {{request.user.username}} <i class="fas fa-user circle"></i>
+          Welcome, {{request.user}} <i class="fas fa-user circle"></i>
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
           <li><a href="{% url 'orderHistory' %}" class="dropdown-item">history</a></li>
@@ -33,6 +33,11 @@
         <a class="nav-link" href="{% url 'cartDetail' %}"><i class="fas fa-shopping-cart"></i>  {{item_count}}</a>
       </li>
       <div class="flex-grow-1"></div>
+      {% if request.user.is_staff %}
+      <li class="nav-item me-2">
+        <a href="{% url 'dashboard' %}" class="nav-link"><i class="fas fa-user-shield"></i> Dashboard</a>
+      </li>
+      {% endif %}
       <form class="form-inline ml-3" action="{% url 'search' %}" method="POST">
         {% csrf_token %}
         <div class="input-group">

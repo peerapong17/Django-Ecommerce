@@ -47,7 +47,7 @@ def productDetail(request, category_slug, product_slug):
 #     return cart
 
 
-@login_required(login_url='signIn')
+@login_required(login_url='signInUser')
 def addToCart(request, product_id):
     # ดึงสินค้าที่เราซื้อมาใช้งาน
     product = Product.objects.get(id=product_id)
@@ -128,6 +128,7 @@ def cartDetail(request):
             # บันทึกข้อมูลใบสั่งซื้อ
             order = Order.objects.create(
                 user_id=request.user.id,
+                status_id=1,
                 name=name,
                 address=address,
                 city=city,

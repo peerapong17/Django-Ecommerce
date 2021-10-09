@@ -3,48 +3,60 @@
 {% load humanize %}
 {% block content%}
 <div class="container">
-    {% if not orders %}
     <div class="row d-flex justify-content-center">
-        <div class="col-6 mt-4">
+        <div class="col-8 mt-4">
+            {% if not orders %}
             <h2>You dont't have any history</h2>
             <a href="{% url 'home' %}">
                 <h4>Let's add some...</h4>
             </a>
+            {%else%}
+            <h3 align="center" class="mt-4">Order History</h3>
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered text-center align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <td>Order ID</td>
+                            <td>Order date</td>
+                            <td>Payment amount</td>
+                            <td>Order status</td>
+                            <td>View product list</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in orders %}
+                        <tr>
+                            <td>
+                                {{item.id}}
+                            </td>
+                            <td>
+                                {{item.created_at | date:"d M Y"}}
+                            </td>
+                            <td>
+                                {{item.total | intcomma}}
+                            </td>
+                            <td>
+                                <span
+                                    class="fw-bold {% if item.status.id == 1 %} text-dark {% elif item.status.id == 2 %} text-success {% else %} text-danger {% endif %}">
+                                    {{item.status.status}}
+                                </span>
+                            </td>
+                            <td>
+                                {% if item.status.id == 1 %}
+                                <a class="btn btn-secondary " disabled>Details</a>
+                                {% else %}
+                                <a href="{% url 'orderDetails' item.id %}" class="btn btn-success">Details</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {%endfor%}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
         </div>
+
     </div>
-    {%else%}
-    <h3 align="center">ประวัติการสั่งซื้อ</h3>
-    <div class="table-responsive">
-        <table class="table table-condensed">
-            <thead>
-                <tr class="cart_menu">
-                    <td>รหัสใบสั่งซื้อ</td>
-                    <td>วันสั่งซื้อสินค้า</td>
-                    <td>ยอดชำระเงิน</td>
-                    <td>ดูรายการสินค้า</td>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in orders %}
-                <tr>
-                    <td class="cart_price">
-                        <p>{{item.id}}</p>
-                    </td>
-                    <td class="cart_total">
-                        <p class="cart_total_price">{{item.created_at | date:"d M Y"}}</p>
-                    </td>
-                    <td class="cart_total">
-                        <p class="cart_total_price">{{item.total | intcomma}}</p>
-                    </td>
-                    <td class="cart_total">
-                        <a href="{% url 'orderDetails' item.id %}" class="btn btn-success">รายละเอียด</a>
-                    </td>
-                </tr>
-                {%endfor%}
-            </tbody>
-        </table>
-    </div>
-    {% endif %}
 </div>
 
 {% endblock %}

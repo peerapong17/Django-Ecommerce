@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'store',
+    'store.apps.StoreConfig',
+    'dashboard.apps.DashboardConfig',
     'django.contrib.humanize',
     'crispy_forms',
     'stripe'
@@ -74,7 +75,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'store.context_processors.get_categories',
-                'store.context_processors.counter'
+                'store.context_processors.counter',
+                'store.context_processors.get_orderStatus',
             ],
         },
     },

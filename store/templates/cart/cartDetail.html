@@ -3,49 +3,60 @@
 {% block content%}
 {% load static %}
 
+<style>
+    .lead {
+        text-decoration: none;
+    }
+
+    .lead:hover {
+        text-decoration: underline;
+    }
+</style>
+
 <div class="container">
     <div class="row d-flex justify-content-center">
         <div class="col-8 mt-4">
             {% if not cart_items%}
-
             <h2>No have no item in cart</h2>
             <a href="{% url 'home' %}">
                 <h4>Let's add some...</h4>
             </a>
 
             {%else%}
-            <div class="table-responsive">
-                <table class="table table-bordered">
+            <h3 align="center">Cart</h3>
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered text-center align-middle">
                     <thead class="table-dark">
-                        <tr class="cart_menu">
-                            <td class="image">รายการสินค้า</td>
-                            <td class="description"></td>
-                            <td class="price">ราคา</td>
-                            <td class="quantity">จำนวน</td>
-                            <td class="total">รวม</td>
+                        <tr>
+                            <td></td>
+                            <td>Product list</td>
+                            <td>Price</td>
+                            <td>Quantity</td>
+                            <td>Total</td>
+                            <td>Status</td>
                             <td></td>
                         </tr>
                     </thead>
                     <tbody>
                         {% for item in cart_items %}
                         <tr>
-                            <td class="cart_product">
+                            <td>
                                 <a href="{{item.product.get_detail}}"><img src="{{item.product.image.url}}" alt=""
                                         width="60px" height="60px"></a>
                             </td>
-                            <td class="cart_description">
-                                <h5><a href="{{item.product.get_detail}}">{{item.product.name}}</a></h5>
+                            <td>
+                                <a class="lead" href="{{item.product.get_detail}}">{{item.product.name}}</a>
                             </td>
-                            <td class="cart_price">
-                                <p>{{item.product.price|intcomma}}</p>
+                            <td>
+                                {{item.product.price|intcomma}}
                             </td>
-                            <td class="cart_quantity">
-                                <p>{{item.quantity}}</p>
+                            <td>
+                                {{item.quantity}}
                             </td>
-                            <td class="cart_total">
-                                <p class="cart_total_price">{{item.sub_total|intcomma}}</p>
+                            <td>
+                                {{item.sub_total|intcomma}}
                             </td>
-                            <td class="cart_delete">
+                            <td>
                                 <a class="btn btn-danger" onclick="return confirm('Are you sure ?')"
                                     href="{% url 'removeFromCart' item.product.id %}"><i class="fa fa-trash"></i></a>
                             </td>
@@ -56,7 +67,7 @@
             </div>
             <div class="float-end d-flex flex-column align-items-end">
                 <h4 class="mb-4">ยอดชำระเงิน {{total|intcomma}} บาท</h4>
-                <form  action="" method="POST">
+                <form action="" method="POST">
                     {% csrf_token %}
                     <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
                         data-key="{{ data_key }}" data-amount="{{ stripe_total }}" data-name="Kong-Shop"

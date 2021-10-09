@@ -1,0 +1,77 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content%}
+<div class="container">
+    <div class="row d-flex justify-content-center">
+        <div class="col-8 mt-4">
+            <div class="d-flex flex-row align-items-center justify-content-between">
+                <h3 align="center">ออร์เดอร์ลูกค้า</h3>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu2"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Status
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <li><a href="{% url 'dashboard' %}" class="dropdown-item" type="button">All</a></li>
+                        {% for item in orderStatus %}
+                        <li><a href="{{item.get_order_sorted_by_status}}" class="dropdown-item" type="button">{{item.status}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered text-center align-middle">
+                    <thead class="table-dark">
+                        <tr class="cart_menu">
+                            <td>Bill Id</td>
+                            <td>Username</td>
+                            <td>Address</td>
+                            <td>Total</td>
+                            <td>Ordered At</td>
+                            <td>Status</td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>
+                                {{order.id}}
+                            </td>
+                            <td>
+                                {{order.user.username}}
+                            </td>
+                            <td>
+                                {{order.address}} - {{order.city}}
+                            </td>
+                            <td>
+                                {{order.total | intcomma}}
+                            </td>
+                            <td>
+                                {{order.created_at | date:"d M Y"}}
+                            </td>
+                            <td>
+                                <span
+                                    class="fw-bold {% if order.status.id == 1 %} text-dark {% elif order.status.id == 2 %} text-success {% else %} text-danger {% endif %}">
+                                    {{order.status.status}}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'confirmOrder' order.id %}" class="btn btn-success"
+                                    onclick="return confirm('Are you sure?')"><i class="fas fa-check"></i></a>
+                                <a href="{% url 'cancelOrder' order.id %}" class="btn btn-danger"
+                                    onclick="return confirm('Are you sure ?')"><i class="fas fa-times"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
