@@ -11,16 +11,44 @@ class Category(models.Model):
         return self.name
 
     class Meta:
+        db_table = 'category'
         ordering = ('name',)
-        verbose_name = 'หมวดหมู่สินค้า'
-        verbose_name_plural = "ข้อมูลประเภทสินค้า"
+        # verbose_name = 'หมวดหมู่สินค้า'
+        # verbose_name_plural = "ข้อมูลประเภทสินค้า"
 
     def get_product_by_category(self):
         return reverse('get_product_by_category', args=[self.slug])
 
+    def update_category(self):
+        return reverse('update_category', args=[self.id])
+
+    def delete_category(self):
+        return reverse('delete_category', args=[self.id])
+
+class Promotion(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    class Meta:
+        db_table = 'promotion'
+        ordering = ('id',)
+
+    def __str__(self):
+        return str(self.name)
+
+    def get_product_by_promotion(self):
+        return reverse('get_product_by_promotion', args=[self.name])
+    
+    def update_promotion(self):
+        return reverse('update_promotion', args=[self.id])
+
+    def delete_promotion(self):
+        return reverse('delete_promotion', args=[self.id])
+
 
 class OrderStatus(models.Model):
     status = models.CharField(max_length=20, unique=True)
+
+    class Meta:
+        db_table = "orderstatus"
 
     def __str__(self):
         return self.status
@@ -34,7 +62,8 @@ class Product(models.Model):
     slug = models.SlugField(max_length=255, unique=True)
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ManyToManyField(Category)
+    promotion = models.ManyToManyField(Promotion, null=True, blank=True)
     image = models.ImageField(upload_to="product", blank=True)
     stock = models.IntegerField()
     available = models.BooleanField(default=True)
@@ -45,10 +74,11 @@ class Product(models.Model):
         return self.name
 
     class Meta:
+        db_table = "product"
         ordering = ('name',)
 
     def get_detail(self):
-        return reverse('productDetail', args=[self.category.slug, self.slug])
+        return reverse('productDetail', args=[self.id])
 
 
 class Cart(models.Model):
@@ -94,7 +124,7 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'Order'
+        db_table = 'order'
         ordering = ('id',)
 
     def __str__(self):
@@ -111,7 +141,7 @@ class OrderItem(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'OrderItem'
+        db_table = 'orderItem'
         ordering = ('order',)
 
     def sub_total(self):

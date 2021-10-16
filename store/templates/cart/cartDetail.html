@@ -23,17 +23,24 @@
             </a>
 
             {%else%}
-            <h3 align="center">Cart</h3>
-            <div class="table-responsive mt-3">
-                <table class="table table-bordered text-center align-middle">
-                    <thead class="table-dark">
+            <div class="card bg-dark text-light ml-0 mb-3">
+                <div class="card-body d-flex justify-content-between">
+                    <div>
+                        <i class="fa fa-shopping-cart"></i> &nbsp;
+                        Shopping Cart
+                    </div>
+                    <a href="{% url 'home' %}" class="btn btn-outline-info btn-sm">Continue Shopping</a>
+                </div>
+            </div>
+            <div class="card p-3 border-white border-3 shadow-sm">
+                <table class="table text-center align-middle">
+                    <thead>
                         <tr>
                             <td></td>
                             <td>Product list</td>
                             <td>Price</td>
                             <td>Quantity</td>
                             <td>Total</td>
-                            <td>Status</td>
                             <td></td>
                         </tr>
                     </thead>
@@ -47,38 +54,60 @@
                             <td>
                                 <a class="lead" href="{{item.product.get_detail}}">{{item.product.name}}</a>
                             </td>
-                            <td>
-                                {{item.product.price|intcomma}}
+                            <td id="item_price_{{forloop.counter}}">
+                                <p>{{item.product.price|intcomma}}</p>
                             </td>
                             <td>
-                                {{item.quantity}}
+                                <button type="button" class="btn btn-light" onclick="onDecrease({{forloop.counter}})"><i
+                                        class="fas fa-minus"></i></button>
+                                <span class="h4 mx-3" id="item_qty_{{forloop.counter}}">{{item.quantity}}</span>
+                                <button type="button" class="btn btn-light" onclick="onIncrease({{forloop.counter}})"><i
+                                        class="fas fa-plus"></i></button>
                             </td>
-                            <td>
+                            <td id="item_subtotal_{{forloop.counter}}">
                                 {{item.sub_total|intcomma}}
                             </td>
                             <td>
-                                <a class="btn btn-danger" onclick="return confirm('Are you sure ?')"
+                                <a class="btn btn-danger" onclick="return confirm('Are you sure?')"
                                     href="{% url 'removeFromCart' item.product.id %}"><i class="fa fa-trash"></i></a>
                             </td>
                         </tr>
                         {%endfor%}
                     </tbody>
+                    
                 </table>
+                <div class="float-end d-flex flex-column align-items-end">
+                    <h4 class="mb-4">ยอดชำระเงิน {{total|intcomma}} บาท</h4>
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                            data-key="{{ data_key }}" data-amount="{{ stripe_total }}" data-name="Kong-Shop"
+                            data-description="{{ description }}" data-locale="thailand" data-currency="thb"
+                            data-shipping-address="true" data-billing-address="true" data-zip-code="true">
+                            </script>
+                    </form>
+                </div>
             </div>
-            <div class="float-end d-flex flex-column align-items-end">
-                <h4 class="mb-4">ยอดชำระเงิน {{total|intcomma}} บาท</h4>
-                <form action="" method="POST">
-                    {% csrf_token %}
-                    <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                        data-key="{{ data_key }}" data-amount="{{ stripe_total }}" data-name="Kong-Shop"
-                        data-description="{{ description }}" data-locale="thailand" data-currency="thb"
-                        data-shipping-address="true" data-billing-address="true" data-zip-code="true">
-                        </script>
-                </form>
-            </div>
+            
             {%endif%}
         </div>
     </div>
 </div>
+
+<script>
+    const onIncrease = (index) => {
+        var qty = document.getElementById("item_qty_" + index)
+        qty.innerText++
+    }
+
+    const onDecrease = (index) => {
+        var qty = document.getElementById("item_qty_" + index)
+        if (qty.innerHTML < 2) {
+            qty.innerHTML = 1
+        } else {
+            qty.innerHTML--
+        }
+    }
+</script>
 
 {% endblock %}

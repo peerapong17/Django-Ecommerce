@@ -1,18 +1,22 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from store.models import Category, Product, Cart, CartItem, Order, OrderItem
+from store.models import Category, Product, Cart, CartItem, Order, OrderItem, Promotion
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 import stripe
 
 
-def index(request, category_slug=None):
+def index(request, category_slug=None, promotion=None):
     products = None
     category = None
     if category_slug != None:
         category = get_object_or_404(Category, slug=category_slug)
-        products = category.product_set.all()
-        # products=Product.objects.all().filter(category=category,available=True)
+        products = Product.objects.filter(
+            category=category, available=True).all()
+    elif promotion != None:
+        promotion = get_object_or_404(Promotion, name=promotion)
+        products = Product.objects.filter(
+            promotion=promotion, available=True).all()
     else:
         products = Product.objects.all().filter(available=True)
 
@@ -28,13 +32,14 @@ def index(request, category_slug=None):
     except (EmptyPage, InvalidPage):
         productperPage = paginator.page(paginator.num_pages)
 
-    return render(request, 'store/index.html', {'products': productperPage})
+    return render(request, 'store/index.html', {'products': productperPage, 'promotion': promotion})
 
 
-def productDetail(request, category_slug, product_slug):
+def productDetail(request, product_id):
     try:
-        product = Product.objects.get(
-            category__slug=category_slug, slug=product_slug)
+        # product = Product.objects.get(
+        #     category__slug=category_slug, slug=product_slug)
+        product = Product.objects.get(id=product_id)
     except Exception as e:
         raise e
     return render(request, 'store/product.html', {'product': product})
@@ -51,41 +56,26 @@ def productDetail(request, category_slug, product_slug):
 def addToCart(request, product_id):
     # ดึงสินค้าที่เราซื้อมาใช้งาน
     product = Product.objects.get(id=product_id)
-    # สร้างตะกร้าสินค้า
+    if request.method == "POST":
+        qty = int(request.POST['qty'])
+        try:
+            cart = Cart.objects.get(cart_id=request.user.id)
+        except Cart.DoesNotExist:
+            cart = Cart.objects.create(cart_id=request.user.id)
+            cart.save()
 
-    # if not request.session['cart']:
-    #     request.session['cart'] = {}
+        try:
+            cart_item = CartItem.objects.get(product=product, cart=cart)
+            if cart_item.quantity < cart_item.product.stock:
+                cart_item.quantity += qty
 
-    # product_document = {
-    #     'title': product.name,
-    #     'price': int(product.price),
-    #     'image': json.dumps(str(product.image)),
-    #     'amount': 1
-    # }
-
-    # print(product_id)
-    # print(product_document)
-    # request.session['cart'][str(product_id)] = product_document
-    try:
-        cart = Cart.objects.get(cart_id=request.user.id)
-    except Cart.DoesNotExist:
-        cart = Cart.objects.create(cart_id=request.user.id)
-        cart.save()
-
-    try:
-        cart_item = CartItem.objects.get(product=product, cart=cart)
-        if cart_item.quantity < cart_item.product.stock:
-            cart_item.quantity += 1
-            cart_item.save()
-
-    except CartItem.DoesNotExist:
-        cart_item = CartItem.objects.create(
-            product=product,
-            cart=cart,
-            quantity=1
-        )
+        except CartItem.DoesNotExist:
+            cart_item = CartItem.objects.create(
+                product=product,
+                cart=cart,
+                quantity=qty
+            )
         cart_item.save()
-    return redirect('cartDetail')
 
 
 def cartDetail(request):

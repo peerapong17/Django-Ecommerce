@@ -1,4 +1,4 @@
-from store.models import Category, Cart, OrderStatus
+from store.models import Category, Cart, OrderStatus, Product, Promotion
 
 
 def get_categories(request):
@@ -9,6 +9,14 @@ def get_categories(request):
 def get_orderStatus(request):
     orderStatus = OrderStatus.objects.all()
     return dict(orderStatus=orderStatus)
+
+def get_promotions(request):
+    promotions = Promotion.objects.all()
+    return dict(promotions=promotions)
+
+def get_products(request):
+    products = Product.objects.all()
+    return dict(products=products)
 
 
 def counter(request):

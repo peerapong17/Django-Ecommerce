@@ -77,6 +77,8 @@ TEMPLATES = [
                 'store.context_processors.get_categories',
                 'store.context_processors.counter',
                 'store.context_processors.get_orderStatus',
+                'store.context_processors.get_promotions',
+                'store.context_processors.get_products',
             ],
         },
     },
