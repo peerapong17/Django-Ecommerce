@@ -1,0 +1,66 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content%}
+<div class="container">
+    <div class="row justify-content-center my-4">
+        <div class="col-8">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+                {{message}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            <div class="d-flex justify-content-between">
+                <h3>Product List</h3>
+                <a href="{% url 'create_product' %}" class="btn btn-success">
+                    <i class="fas fa-plus"></i>
+                    Create Product
+                </a>
+            </div>
+            {% if products %}
+            <table class="table text-center align-middle table-bordered table-striped mt-3">
+                <thead class="table-danger">
+                    <tr>
+                        <th>Product Image</th>
+                        <th>Product Name</th>
+                        <th>Changes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td width="20%">
+                            <img width="60" height="60" src="{{product.image.url}}" alt="{{product.name}}">
+                        </td>
+                        <td width="50%">
+                            {{product.name}}
+                        </td>
+                        <td width="30%">
+                            <a href="{% url 'update_product' product.id %}"
+                                class="btn btn-primary mx-1">
+                                <i class="fas fa-edit"></i>
+                                Edit
+                            </a>
+                            <a href="{% url 'delete_product' product.id %}"
+                                onclick="return window.confirm('Are you sure?')"
+                                class="btn btn-danger mx-1">
+                                <i class="far fa-trash-alt"></i>
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+            {% else %}
+            <h4 class="mt-4 text-muted">There are no products, let's add some</h4>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

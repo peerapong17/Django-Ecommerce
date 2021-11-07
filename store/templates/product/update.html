@@ -1,0 +1,144 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+
+    <div class="container">
+        <div class="row justify-content-center my-4">
+            {% for category in product.category.all %}
+                <div class="d-none category">{{ category.name }}</div>
+            {% endfor %}
+            <div class="d-none promotion">{{ product.promotion }}</div>
+            <div class="d-none available">{{ product.available }}</div>
+
+            <div class="col-6">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <div class="card p-3">
+                    <h1 class="text-info">Update Product</h1>
+                    <form method="POST" action="{% url 'update_product' product.id %}" class="mt-3" enctype='multipart/form-data'>
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ product.name }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="slug" class="form-label">Slug</label>
+                            <input type="text" class="form-control" id="slug" name="slug" value="{{ product.slug }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="desc" class="form-label">Description</label>
+                            <textarea class="form-control" id="desc" rows="3" name="desc">{{ product.description }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Price</label>
+                            <input type="number" class="form-control" id="price" name="price"
+                                   value="{{ product.price }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="formFile" class="form-label">Image</label>
+                            <input class="form-control" type="file" id="formFile" name="image" value="{{ product.image.url }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="stock" class="form-label">Stock</label>
+                            <input type="number" class="form-control" id="stock" name="stock"
+                                   value="{{ product.stock }}">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-label">Category</div>
+                            {% for category in categories %}
+                                {% if category in product.category.all %}
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" value="{{ category.id }}"
+                                               id="{{ category.name }}"
+                                               name="categories" checked>
+                                        <label class="form-check-label" for="{{ category.name }}">
+                                            {{ category.name }}
+                                        </label>
+                                    </div>
+                                {% else %}
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" value="{{ category.id }}"
+                                               id="{{ category.name }}"
+                                               name="categories">
+                                        <label class="form-check-label" for="{{ category.name }}">
+                                            {{ category.name }}
+                                        </label>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-label">Promotion</div>
+                            {% for promotion in promotions %}
+                                {% if promotion in product.promotion.all %}
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" value="{{ promotion.id }}"
+                                           id="{{ promotion.name }}"
+                                           name="promotions" checked>
+                                    <label class="form-check-label" for="{{ promotion.name }}">
+                                        {{ promotion.name }}
+                                    </label>
+                                </div>
+                                {% else %}
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" value="{{ promotion.title }}"
+                                           id="{{ promotion.name }}"
+                                           name="promotions">
+                                    <label class="form-check-label" for="{{ promotion.name }}">
+                                        {{ promotion.name }}
+                                    </label>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="mb-4">
+                            <div class="form-label">Available</div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="true" id="available"
+                                       name="available" {% if product.available == 1 %} checked {% endif %}>
+                                <label class="form-check-label" for="available">
+                                    Yes
+                                </label>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-primary w-75 mx-1">Update</button>
+                            <a href="{% url 'products' %}" class="btn btn-secondary w-75 mx-1"><i
+                                    class="fas fa-sign-out-alt"></i> Back</a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(function () {
+            console.log("dsadas")
+            let categories = $(".d-none.category").text()
+            let input = $(".form-check-input")
+
+            for (let i = 0; i < categories.length; i++) {
+                console.log(categories[i])
+            }
+            for (let i = 0; i < input.length; i++) {
+                console.log(input[i])
+            }
+
+            for (category in categories) {
+                console.log(category)
+            }
+            console.log(input[0])
+            console.log($(".d-none.category").text())
+        })
+    </script>
+
+{% endblock %}

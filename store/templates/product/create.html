@@ -1,0 +1,90 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content%}
+
+<div class="container">
+    <div class="row justify-content-center my-4">
+        <div class="col-6">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+                {{message}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            <div class="card p-3">
+                <h1 class="text-info">Add Product</h1>
+                <form method="POST" action="{% url 'create_product' %}" enctype='multipart/form-data' class="mt-3">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" id="name" name="name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="slug" class="form-label">Slug</label>
+                        <input type="text" class="form-control" id="slug" name="slug">
+                    </div>
+                    <div class="mb-3">
+                        <label for="desc" class="form-label">Description</label>
+                        <textarea class="form-control" id="desc" name="desc" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Price</label>
+                        <input type="number" class="form-control" id="price" name="price">
+                    </div>
+                    <div class="mb-3">
+                        <label for="formFile" class="form-label">Image</label>
+                        <input class="form-control" type="file" id="formFile" name="image">
+                    </div>
+                    <div class="mb-3">
+                        <label for="stock" class="form-label">Stock</label>
+                        <input type="number" class="form-control" id="stock" name="stock">
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-label">Category</div>
+                        {% for category in categories %}
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="{{category.id}}" id="{{category.name}}"
+                                name="categories">
+                            <label class="form-check-label" for="{{category.name}}">
+                                {{category.name}}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-label">Promotion</div>
+                        {% for promotion in promotions %}
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" value="{{promotion.id}}" id="{{promotion.name}}"
+                                name="promotions">
+                            <label class="form-check-label" for="{{promotion.name}}">
+                                {{promotion.name}}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mb-4">
+                        <div class="form-label">Available</div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="True" id="available" name="available">
+                        <label class="form-check-label" for="available">
+                            Yes
+                        </label>
+                    </div>
+                    </div>
+                    <div class="d-flex">
+                        <button type="submit" class="btn btn-success w-75 mx-1">Create</button>
+                        <a href="{% url 'products' %}" class="btn btn-secondary w-75 mx-1"><i
+                                class="fas fa-sign-out-alt"></i> Back</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
