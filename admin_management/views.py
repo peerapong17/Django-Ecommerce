@@ -43,7 +43,7 @@ def update(request):
     #             return redirect('signUp')
     # else:
     #     form = AuthenticationForm()
-    # return render(request, 'auth/signIn.html', {'form': form})
+    # return render(request, 'auth/sign_in.html', {'form': form})
 
 
 def delete(request):

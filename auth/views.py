@@ -22,7 +22,7 @@ def sign_up_user(request):
             return redirect("signInUser")
     else:
         form = SignUpUserForm()
-    return render(request, "auth/signup.html", {'form': form})
+    return render(request, "auth/sign_up.html", {'form': form})
 
 
 def sign_in_user(request):
@@ -39,7 +39,7 @@ def sign_in_user(request):
                 return redirect('signUp')
     else:
         form = AuthenticationForm()
-    return render(request, 'auth/signIn.html', {'form': form})
+    return render(request, 'auth/sign_in.html', {'form': form})
 
 
 def sign_out_user(request):

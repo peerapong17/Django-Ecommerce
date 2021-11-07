@@ -136,5 +136,17 @@ USE_TZ = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-PUBLIC_KEY = 'pk_test_51JfnV0Kv8CtM3zHpXNBpLcCZyybvUJ2EIG3oYGw2jaeaMkjw3PLxhkI8KuSnO6T3UqW72rwAy7zDYAdwXHs0k58D00r1gsBFJN'
+PUBLIC_KEY = 'pk_test_51JfnV0Kv8CtM3zHpXNBpLcCZyybvUJ2EIG3oYGw2jaeaMkjw3PLxhkI8KuSnO6T3UqW72rwAy7zDYAdwXHs0k58D00r1gsBFJN '
 SECRET_KEY = 'sk_test_51JfnV0Kv8CtM3zHpPhFDSnMVdVoO94yYibitfOf3G9dwcm9c6U8zBAIi0Eoj5e48K8X3gOVYcseP85lX8aBy97Wd006KkhfJYF'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.gmail.com'
+
+EMAIL_PORT = 587
+
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = '17peerapong4.0@gmail.com'
+
+EMAIL_HOST_PASSWORD = '0645626816moo'
