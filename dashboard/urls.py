@@ -18,6 +18,4 @@ urlpatterns = [
     path('promotions/update/<int:promotion_id>', views.updatePromotion, name="update_promotion"),
     path('promotions/delete/<int:promotion_id>',
          views.promotion, name="delete_promotion"),
-    path('products', views.product, name="products"),
-
 ]

@@ -42,7 +42,7 @@
                                 </span>
                             </td>
                             <td>
-                                {% if item.status.id == 1 %}
+                                {% if item.status.id == 1 or item.status.id == 3 %}
                                 <a class="btn btn-secondary " disabled>Details</a>
                                 {% else %}
                                 <a href="{% url 'orderDetails' item.id %}" class="btn btn-success">Details</a>

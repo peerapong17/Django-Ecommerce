@@ -78,10 +78,10 @@
                 </table>
                 <div class="float-end d-flex flex-column align-items-end">
                     <h4 class="mb-4">ยอดชำระเงิน {{total|intcomma}} บาท</h4>
-                    <form action="" method="POST">
+                    <form method="POST">
                         {% csrf_token %}
                         <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                            data-key="{{ data_key }}" data-amount="{{ stripe_total }}" data-name="Kong-Shop"
+                            data-key="{{ data_key }}" data-amount="{{ stripe_total }}" data-name="Moo-Shop"
                             data-description="{{ description }}" data-locale="thailand" data-currency="thb"
                             data-shipping-address="true" data-billing-address="true" data-zip-code="true">
                             </script>
@@ -96,12 +96,12 @@
 
 <script>
     const onIncrease = (index) => {
-        var qty = document.getElementById("item_qty_" + index)
+        let qty = document.getElementById("item_qty_" + index)
         qty.innerText++
     }
 
     const onDecrease = (index) => {
-        var qty = document.getElementById("item_qty_" + index)
+        let qty = document.getElementById("item_qty_" + index)
         if (qty.innerHTML < 2) {
             qty.innerHTML = 1
         } else {

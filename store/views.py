@@ -9,11 +9,11 @@ import stripe
 def index(request, category_slug=None, promotion=None):
     products = None
     category = None
-    if category_slug != None:
+    if category_slug is not None:
         category = get_object_or_404(Category, slug=category_slug)
         products = Product.objects.filter(
             category=category, available=True).all()
-    elif promotion != None:
+    elif promotion is not None:
         promotion = get_object_or_404(Promotion, name=promotion)
         products = Product.objects.filter(
             promotion=promotion, available=True).all()
@@ -35,7 +35,7 @@ def index(request, category_slug=None, promotion=None):
     return render(request, 'store/index.html', {'products': productperPage, 'promotion': promotion})
 
 
-def productDetail(request, product_id):
+def product_detail(request, product_id):
     try:
         # product = Product.objects.get(
         #     category__slug=category_slug, slug=product_slug)
@@ -52,8 +52,8 @@ def productDetail(request, product_id):
 #     return cart
 
 
-@login_required(login_url='signInUser')
-def addToCart(request, product_id):
+@login_required(login_url='sign_in_user')
+def add_to_cart(request, product_id):
     # ดึงสินค้าที่เราซื้อมาใช้งาน
     product = Product.objects.get(id=product_id)
     if request.method == "POST":
@@ -78,22 +78,21 @@ def addToCart(request, product_id):
         cart_item.save()
 
 
-def cartDetail(request):
+def cart_detail(request):
     total = 0
-    counter = 0
     cart_items = None
+    cart=None
     try:
         cart = Cart.objects.get(cart_id=request.user.id)  # ดึงตะกร้า
         cart_items = cart.cartitem_set.all()
         # cart_items=CartItem.objects.filter(cart=cart,active=True) #ดึงข้อมูลสินค้าในตะกร้า
         for item in cart_items:
-            total += (item.product.price*item.quantity)
-            counter += item.quantity
+            total += (item.product.price * item.quantity)
     except Exception as e:
         pass
 
     stripe.api_key = settings.SECRET_KEY
-    stripe_total = int(total*100)
+    stripe_total = int(total * 100)
     description = "Payment Online"
     data_key = settings.PUBLIC_KEY
 
@@ -109,7 +108,10 @@ def cartDetail(request):
                 email=email,
                 source=token
             )
-            charge = stripe.Charge.create(
+
+            print(customer)
+
+            stripe.Charge.create(
                 amount=stripe_total,
                 currency='thb',
                 description=description,
@@ -127,6 +129,7 @@ def cartDetail(request):
                 email=email,
                 token=token
             )
+
             order.save()
 
             # บันทึกรายการสั่งซื้อ
@@ -134,28 +137,31 @@ def cartDetail(request):
                 order_item = OrderItem.objects.create(
                     product=item.product,
                     quantity=item.quantity,
-                    order=order
+                    order_id=order.id
                 )
+
                 order_item.save()
                 # ลดจำนวน Stock
                 product = Product.objects.get(id=item.product.id)
-                product.stock = int(product.stock-order_item.quantity)
+                product.stock = int(product.stock - item.quantity)
                 product.save()
-                item.delete()
-            return redirect('thankyou')
+
+            cart.delete()
+
+            return redirect('thank_you')
 
         except stripe.error.CardError as e:
             return False, e
 
-    return render(request, 'cart/cartDetail.html',
-                  dict(cart_items=cart_items, total=total, counter=counter,
+    return render(request, 'cart/cart_detail.html',
+                  dict(cart_items=cart_items, total=total,
                        data_key=data_key,
                        stripe_total=stripe_total,
                        description=description
                        ))
 
 
-def removeFromCart(request, product_id):
+def remove_from_cart(request, product_id):
     cart = Cart.objects.get(cart_id=request.user.id)
     cart_items = cart.cartitem_set.all()
     for item in cart_items:
@@ -171,23 +177,25 @@ def removeFromCart(request, product_id):
 
 
 def search(request):
-    products = Product.objects.filter(name__contains=request.GET['title'])
-    return render(request, 'index.html', {'products': products})
+    products = Product.objects.filter(name__contains=request.POST['search'])
+    return render(request, 'store/index.html', {'products': products})
 
 
-def orderHistory(request):
+def order_history(request):
     if request.user.is_authenticated:
         orders = Order.objects.filter(user_id=request.user.id)
-    return render(request, 'cart/orders.html', {'orders': orders})
+        return render(request, 'cart/orders.html', {'orders': orders})
+    return redirect("signInUser")
 
 
-def orderDetail(request, order_id):
+def order_detail(request, order_id):
     if request.user.is_authenticated:
         order = Order.objects.get(user_id=request.user.id, id=order_id)
         order_items = order.orderitem_set.all()
         # orderitem=OrderItem.objects.filter(order=order)
-    return render(request, 'cart/orderDetail.html', {'order': order, 'order_items': order_items})
+        return render(request, 'cart/order_detail.html', {'order': order, 'order_items': order_items})
+    return redirect("signInUser")
 
 
-def thankyou(request):
-    return render(request, 'store/thankyou.html')
+def thank_you(request):
+    return render(request, 'store/thank_you.html')

@@ -25,8 +25,10 @@ class Category(models.Model):
     def delete_category(self):
         return reverse('delete_category', args=[self.id])
 
+
 class Promotion(models.Model):
     name = models.CharField(max_length=255, unique=True)
+
     class Meta:
         db_table = 'promotion'
         ordering = ('id',)
@@ -36,7 +38,7 @@ class Promotion(models.Model):
 
     def get_product_by_promotion(self):
         return reverse('get_product_by_promotion', args=[self.name])
-    
+
     def update_promotion(self):
         return reverse('update_promotion', args=[self.id])
 
@@ -131,8 +133,6 @@ class Order(models.Model):
         return str(self.id)
 
 
-
-
 class OrderItem(models.Model):
     quantity = models.IntegerField()
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -145,7 +145,7 @@ class OrderItem(models.Model):
         ordering = ('order',)
 
     def sub_total(self):
-        return self.quantity*self.product.price
+        return self.quantity * self.product.price
 
     def __str__(self):
         return self.product

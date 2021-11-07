@@ -123,6 +123,3 @@ def updatePromotion(request, promotion_id):
 
     return render(request, 'promotion/update.html', {"promotion": promotion})
 
-
-def product(request):
-    return render(request, 'dashboard/product.html')

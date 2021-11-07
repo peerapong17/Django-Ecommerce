@@ -3,96 +3,102 @@
 {% load humanize %}
 {% block content %}
 
-<style>
-  img {
-    padding: 23px;
-  }
+    <style>
+        img {
+            padding: 23px;
+        }
 
-  .badge {
-    text-decoration: none;
-  }
+        .badge {
+            text-decoration: none;
+        }
 
-  .badge:hover {
-    color: white;
-  }
-</style>
+        .badge:hover {
+            color: white;
+        }
+    </style>
 
-<div class="container">
-  <div class="row">
-    <div class="d-none">{{promotion}}</div>
-    <div class="text-center my-3">
-      <a href="{% url 'home' %}" class="btn btn-outline-danger filter-button all" data-filter="all">ทั้งหมด</a>
-      {% for promotion in promotions %}
-      <a href="{{promotion.get_product_by_promotion}}" class="btn btn-outline-danger filter-button {{promotion.name | cut:' ' | cut:'%'}}"
-        data-filter="{{promotion.name}}">{{promotion.name}}</a>
-      {% endfor %}
-    </div>
-    {% if products %}
-    {% for product in products %}
-    <div class="col-lg-4 col-md-6 mb-4">
-      <div class="card h-100">
-        <a href="{{product.get_detail}}"><img class="card-img-top" src="{{product.image.url}}" height="270"></a>
-        <div class="card-body">
-          <div class="card-title d-flex justify-content-between">
-            <h5 href="{{product.get_detail}}" class="fw-bold">{{product.name}}</h5>
-            <h5 class="text-info">฿{{product.price|intcomma}}</h5>
-          </div>
-          <p class="card-text">{{product.description | slice:":70"}}</p>
-          <div class="d-flex mb-2">
-            {% for category in product.category.all %}
-            <a class="badge bg-success bg-opacity-75 p-2 mx-1"
-              href="{{category.get_product_by_category}}">{{category.name}}</a>
-            {% endfor %}
-          </div>
-          <div class="d-flex">
-            {% for promotion in product.promotion.all %}
-            <a href="{{promotion.get_product_by_promotion}}"
-              class="badge bg-danger bg-opacity-75 p-2 mx-1 filter {{promotion.name}}">{{promotion.name}}</a>
-            {% endfor %}
-          </div>
-        </div>
-        <div class="card-footer d-flex justify-content-between">
-          {% if product.stock <= 0 %} <h5 class="text-danger">สินค้าหมด</h5>
+    <div class="container">
+        <div class="row">
+            <div class="d-none">{{ promotion }}</div>
+            {% if promotions %}
+                <div class="text-center my-3">
+                    <a href="{% url 'home' %}" class="btn btn-outline-danger filter-button all" data-filter="all">ทั้งหมด</a>
+                    {% for promotion in promotions %}
+                        <a href="{{ promotion.get_product_by_promotion }}"
+                           class="btn btn-outline-danger filter-button {{ promotion.name | cut:' ' | cut:'%' }}"
+                           data-filter="{{ promotion.name }}">{{ promotion.name }}</a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if products %}
+                {% for product in products %}
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100">
+                            <a href="{{ product.get_detail }}"><img class="card-img-top" src="{{ product.image.url }}"
+                                                                    height="270"></a>
+                            <div class="card-body">
+                                <div class="card-title d-flex justify-content-between">
+                                    <h5 href="{{ product.get_detail }}" class="fw-bold">{{ product.name }}</h5>
+                                    <h5 class="text-info">฿{{ product.price|intcomma }}</h5>
+                                </div>
+                                <p class="card-text">{{ product.description | slice:":70" }}</p>
+                                <div class="d-flex mb-2">
+                                    {% for category in product.category.all %}
+                                        <a class="badge bg-success bg-opacity-75 p-2 mx-1"
+                                           href="{{ category.get_product_by_category }}">{{ category.name }}</a>
+                                    {% endfor %}
+                                </div>
+                                <div class="d-flex">
+                                    {% for promotion in product.promotion.all %}
+                                        <a href="{{ promotion.get_product_by_promotion }}"
+                                           class="badge bg-danger bg-opacity-75 p-2 mx-1 filter {{ promotion.name }}">{{ promotion.name }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between">
+                                {% if product.stock <= 0 %} <h5 class="text-danger">สินค้าหมด</h5>
+                                {% else %}
+                                    <a href="{{ product.get_detail }}" class="btn btn-dark w-100">See Details</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
             {% else %}
-            <a href="{{product.get_detail}}" class="btn btn-dark w-100">See Details</a>
+                <h2 class="text-center mt-3">No product...</h2>
             {% endif %}
         </div>
-      </div>
-    </div>
-    {% endfor %}
-    {% else %}
-    <h2 class="text-center mt-3">No product...</h2>
-    {% endif %}
-  </div>
-  <nav aria-label="pagination">
-    {% if products.paginator.num_pages > 1 %}
-    <ul class="pagination d-flex justify-content-center">
-      <li class="page-item {% if not products.has_previous %} disabled {% endif %}"><a class="page-link" 
-        {% if products.has_previous %} href="?page={{products.previous_page_number}}" {% endif %}>Previous</a></li>
-      {% for page_number in products.paginator.page_range %}
-      <li class="page-item
+        <nav aria-label="pagination">
+            {% if products.paginator.num_pages > 1 %}
+                <ul class="pagination d-flex justify-content-center">
+                    <li class="page-item {% if not products.has_previous %} disabled {% endif %}"><a class="page-link"
+                            {% if products.has_previous %} href="?page={{ products.previous_page_number }}" {% endif %}>Previous</a>
+                    </li>
+                    {% for page_number in products.paginator.page_range %}
+                        <li class="page-item
                 {% if products.number == page_number %}
                       active
                 {% endif %}
                 "><a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a></li>
-      {% endfor %}
-      <li class="page-item {% if not products.has_next %} disabled {% endif %}"><a class="page-link" 
-        {% if products.has_next %} href="?page={{products.next_page_number}}" {% endif %}>Next</a></li>
-    </ul>
-    {% endif %}
-  </nav>
-</div>
+                    {% endfor %}
+                    <li class="page-item {% if not products.has_next %} disabled {% endif %}"><a class="page-link"
+                            {% if products.has_next %} href="?page={{ products.next_page_number }}" {% endif %}>Next</a>
+                    </li>
+                </ul>
+            {% endif %}
+        </nav>
+    </div>
 
-<script>
-  $(function () {
-    var promotion = $('.d-none').text()
-    var filter = $('.filter-button' + "." + promotion.split(' ').join('').split('%').join(''))
-    if (promotion == "None") {
-      $('.filter-button.all').addClass("active")
-    } else {
-      filter.addClass("active")
-    }
-  })
-</script>
+    <script>
+        $(function () {
+            var promotion = $('.d-none').text()
+            var filter = $('.filter-button' + "." + promotion.split(' ').join('').split('%').join(''))
+            if (promotion == "None") {
+                $('.filter-button.all').addClass("active")
+            } else {
+                filter.addClass("active")
+            }
+        })
+    </script>
 
 {% endblock %}

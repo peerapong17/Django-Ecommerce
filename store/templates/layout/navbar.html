@@ -1,80 +1,83 @@
 <nav class="navbar navbar-expand-md navbar-white bg-info bg-opacity-10 px-4 shawdow border-bottom">
-  <a href="/" class="navbar-brand">
-    <i class="fab fa-shopify text-primary text-opacity-75 fa-2x"></i>
-  </a>
-  <button type="button" class="navbar-toggler bg-light" data-toggle="collapse" data-target="#nav" name="button"><span
-      class="navbar-toggler-icon"></span></button>
-  <div class="collapse navbar-collapse" id="nav">
-    <ul class="navbar-nav flex-grow-1">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-          aria-expanded="false">
-          Category
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <li><a href="{% url 'home' %}" class="dropdown-item">All</a></li>
-          {% for category in categories%}
-          <li><a class="dropdown-item" href="{{category.get_product_by_category}}">{{category.name}}</a></li>
-          {% endfor %}
+    <a href="/" class="navbar-brand">
+        <i class="fab fa-shopify text-primary text-opacity-75 fa-2x"></i>
+    </a>
+    <button type="button" class="navbar-toggler bg-light" data-toggle="collapse" data-target="#nav" name="button"><span
+            class="navbar-toggler-icon"></span></button>
+    <div class="collapse navbar-collapse" id="nav">
+        <ul class="navbar-nav flex-grow-1">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                    Category
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li><a href="{% url 'home' %}" class="dropdown-item">All</a></li>
+                    {% for category in categories %}
+                        <li><a class="dropdown-item"
+                               href="{{ category.get_product_by_category }}">{{ category.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </li>
+            <div class="flex-grow-1"></div>
+
+            <form class="form-inline me-4" action="{% url 'search' %}" method="POST">
+                {% csrf_token %}
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Search">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+            </form>
+            {% if request.user.is_staff %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                        <i class="fas fa-tasks"></i>
+                        Management
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a></li>
+                        <li><a class="dropdown-item" href="{% url 'categories' %}">Categories</a></li>
+                        <li><a class="dropdown-item" href="{% url 'promotions' %}">Promotions</a></li>
+                        <li><a class="dropdown-item" href="{% url 'products' %}">Products</a></li>
+                    </ul>
+                </li>
+            {% endif %}
+            {% if request.user.is_authenticated and request.user.username %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'cartDetail' %}"><i class="fas fa-shopping-cart"></i>
+                        ({{ item_count }})</a>
+                </li>
+                <li class="nav-item dropdown ms-2 ">
+                    <a class="nav-link" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user"></i>
+                        {{ request.user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'orderHistory' %}">My purchase</a></li>
+                        <li><a class="dropdown-item" href="#">Settings</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a href="{% url 'signOutUser' %}" class="dropdown-item"
+                               onclick="return window.confirm('Are you sure?')">Logout<i
+                                class="fas fa-sign-out-alt ms-2"></i></a></li>
+                    </ul>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a href="{% url 'signUpUser' %}" class="nav-link text-light mx-3 btn btn-success">
+                        Sign Up <i class="fas fa-user-plus"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'signInUser' %}" class="nav-link text-light btn btn-primary">
+                        Sign In <i class="fas fa-sign-in-alt"></i>
+                    </a>
+                </li>
+            {% endif %}
         </ul>
-      </li>
-      <div class="flex-grow-1"></div>
-      
-      <form class="form-inline me-4" action="{% url 'search' %}" method="POST">
-        {% csrf_token %}
-        <div class="input-group">
-          <input type="text" name="search" class="form-control" placeholder="Search">
-          <div class="input-group-append">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
-          </div>
-        </div>
-      </form>
-      {% if request.user.is_staff %}
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-          aria-expanded="false">
-          <i class="fas fa-tasks"></i> 
-          Management
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <li><a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a></li>
-          <li><a class="dropdown-item" href="{% url 'categories' %}">Categories</a></li>
-          <li><a class="dropdown-item" href="{% url 'promotions' %}">Promotions</a></li>
-          <li><a class="dropdown-item" href="{% url 'products' %}">Products</a></li>
-        </ul>
-      </li>
-      {% endif %}
-      {% if request.user.is_authenticated and request.user.username %}
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'cartDetail' %}"><i class="fas fa-shopping-cart"></i> ({{item_count}})</a>
-      </li>
-      <li class="nav-item dropdown ms-2 ">
-        <a class="nav-link" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-          <i class="fas fa-user"></i>
-          {{request.user.username}}
-        </a>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-          <li><a class="dropdown-item" href="{% url 'orderHistory' %}" class="dropdown-item">My purchase</a></li>
-          <li><a class="dropdown-item" href="#">Settings</a></li>
-          <li>
-            <hr class="dropdown-divider">
-          </li>
-          <li><a href="{% url 'signOutUser' %}" class="dropdown-item" onclick="return window.confirm('Are you sure?')">Logout<i
-                class="fas fa-sign-out-alt ms-2"></i></a></li>
-        </ul>
-      </li>
-      {% else %}
-      <li class="nav-item">
-        <a href="{% url 'signUpUser' %}" class="nav-link text-light mx-3 btn btn-success">
-          Sign Up <i class="fas fa-user-plus"></i>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a href="{% url 'signInUser' %}" class="nav-link text-light btn btn-primary">
-          Sign In <i class="fas fa-sign-in-alt"></i>
-        </a>
-      </li>
-      {% endif %}
-    </ul>
-  </div>
+    </div>
 </nav>
