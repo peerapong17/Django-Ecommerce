@@ -1,69 +1,93 @@
 {% extends 'layout/base.html' %}
 {% load humanize %}
-{% block content%}
+{% block content %}
 
-<div class="container">
-  <div class="row my-4">
-    <div class="col-lg-8">
-      <div class="card">
-        <img class="card-img-top" src="{{product.image.url}}" height="500">
-      </div>
-    </div>
-    <div class="col-lg-4">
-      <div class="card">
-        <div class="card-header">
-          <h2>{{product.name}}</h2>
-        </div>
-        <div class="card-body">
-          <p class="card-text">{{product.description}}</p>
-          <h4>฿{{product.price | intcomma}}</h4>
-          <div class="d-flex justify-content-between align-items-center mt-4">
-            <div class="d-flex align-items-center">
-              <button type="button" class="btn btn-light" onclick="onDecrease()"><i class="fas fa-minus"></i></button>
-              <span class="h4 mx-3" id="quantity"></span>
-              <button type="button" class="btn btn-light" onclick="onIncrease()"><i class="fas fa-plus"></i></button>
+    <div class="container">
+        <div class="row my-4">
+            <div class="col-lg-8">
+                <div class="card">
+                    <img class="card-img-top" src="{{ product.image.url }}" height="500">
+                </div>
             </div>
-            <span class="text-muted">{{product.stock}} piece available</span>
-          </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>{{ product.name }}</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">{{ product.description }}</p>
+                        <h4>฿{{ product.price | intcomma }}</h4>
+                        <div class="d-flex justify-content-between align-items-center mt-4">
+                            <div class="d-flex align-items-center">
+                                <button type="button" class="btn btn-light" onclick="onDecrease()"><i
+                                        class="fas fa-minus"></i></button>
+                                <span class="h4 mx-3" id="quantity"></span>
+                                <button type="button" class="btn btn-light" onclick="onIncrease()"><i
+                                        class="fas fa-plus"></i></button>
+                            </div>
+                            <span class="text-muted">{{ product.stock }} piece available</span>
+                        </div>
+                    </div>
+                    {% if product.stock <= 0 %} <h5 class="text-danger">สินค้าหมด</h5>
+                    {% else %}
+                        <!-- <a href="{%url 'addToCart' product.id %}" class="btn btn-danger">Add to cart</a> -->
+                        <button onclick="onAddCart({{ product.id }})" class="btn btn-danger">Add to cart</button>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-        {% if product.stock <= 0 %} <h5 class="text-danger">สินค้าหมด</h5>
-          {% else %}
-          <!-- <a href="{%url 'addToCart' product.id %}" class="btn btn-danger">Add to cart</a> -->
-          <button onclick="onAddCart({{product.id}})" class="btn btn-danger">Add to cart</button>
-          {% endif %}
-      </div>
     </div>
-  </div>
-</div>
 
-<script>
-  let qty = document.getElementById("quantity")
-  let number = 1;
-  qty.innerHTML = number
-  const onIncrease = () => {
-    number++
-    qty.innerHTML = number
-  }
+    <script>
+        let qty = document.getElementById("quantity")
+        let number = 1;
+        qty.innerHTML = number
+        const onIncrease = () => {
+            number++
+            qty.innerHTML = number
+        }
 
-  const onDecrease = () => {
-    if (number < 2) {
-      number = 1
-      qty.innerHTML = number
-    } else {
-      number--
-      qty.innerHTML = number
-    }
-  }
+        const onDecrease = () => {
+            if (number < 2) {
+                number = 1
+                qty.innerHTML = number
+            } else {
+                number--
+                qty.innerHTML = number
+            }
+        }
 
-  const onAddCart = (id) => {
-    const fd = new FormData();
-    fd.append("qty", number);
-    fetch("http://127.0.0.1:8000/store/cart/add/" + id, {
-      method: "POST",
-      body: fd,
-      headers: { 'X-CSRFToken': '{{ csrf_token }}' }
-    })
-  }
-</script>
+        const onAddCart = (id) => {
+            const fd = new FormData();
+            fd.append("qty", number);
+            fetch("http://127.0.0.1:8000/store/cart/add/" + id, {
+                method: "POST",
+                body: fd,
+                headers: {'X-CSRFToken': '{{ csrf_token }}'}
+            }).then(() => {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'bottom-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                })
+
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Item was added to your cart'
+                })
+            }).catch(err => {
+                Swal.fire(
+                    'An Error Occurred!',
+                    'Something went wrong',
+                    'success'
+                )
+            })
+        }
+    </script>
 
 {% endblock %}

@@ -11,6 +11,7 @@ urlpatterns = [
     path('store/', include("store.urls")),
     path('dashboard/', include("dashboard.urls")),
     path('product/', include("product.urls")),
+    path('accounts/', include('allauth.urls')),
     # path('admin_management/', include("admin_management.urls")),
     path('test/', include("test.urls")),
 ]

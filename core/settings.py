@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'store.apps.StoreConfig',
     'dashboard.apps.DashboardConfig',
     'product.apps.ProductConfig',
@@ -48,7 +49,11 @@ INSTALLED_APPS = [
     'admin_management.apps.AdminConfig',
     'django.contrib.humanize',
     'crispy_forms',
-    'stripe'
+    'stripe',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -82,6 +87,11 @@ TEMPLATES = [
             ],
         },
     },
+]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 WSGI_APPLICATION = 'core.wsgi.application'
@@ -136,7 +146,7 @@ USE_TZ = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-PUBLIC_KEY = 'pk_test_51JfnV0Kv8CtM3zHpXNBpLcCZyybvUJ2EIG3oYGw2jaeaMkjw3PLxhkI8KuSnO6T3UqW72rwAy7zDYAdwXHs0k58D00r1gsBFJN '
+PUBLIC_KEY = 'pk_test_51JfnV0Kv8CtM3zHpXNBpLcCZyybvUJ2EIG3oYGw2jaeaMkjw3PLxhkI8KuSnO6T3UqW72rwAy7zDYAdwXHs0k58D00r1gsBFJN'
 SECRET_KEY = 'sk_test_51JfnV0Kv8CtM3zHpPhFDSnMVdVoO94yYibitfOf3G9dwcm9c6U8zBAIi0Eoj5e48K8X3gOVYcseP85lX8aBy97Wd006KkhfJYF'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -150,3 +160,19 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = '17peerapong4.0@gmail.com'
 
 EMAIL_HOST_PASSWORD = '0645626816moo'
+
+SITE_ID = 1
+
+LOGIN_REDIRECT_URL = "/"
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
